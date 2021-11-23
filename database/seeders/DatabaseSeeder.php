@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\OrderStatus;
 use App\Models\Product;
 use App\Models\ProductsAttribute;
 use Illuminate\Database\Seeder;
@@ -23,7 +24,9 @@ class DatabaseSeeder extends Seeder
        //$this->call(ProductsAttributesTableSeeder::class);
       //  $this->call(ProductsImagesTableSeeder::class);
        // $this->call(BrandsTableSeeder::class);
-        $this->call(BannerSeeder::class);
-
+       // $this->call(BannerSeeder::class);
+        //$this->call(CouponSeeder::class);
+       // $this->call(DeliverySeeder::class);
+        $this->call(OrderStatusSeeder::class);
     }
 }

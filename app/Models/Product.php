@@ -64,6 +64,10 @@ class Product extends Model
 
         return  array('product_price'=>$attrPrice['price'],'discounted_price'=> $discountedPrice,'stock'=>$attrPrice['stock'],'discount'=> $discount) ;
     }
+    public static function img ($product_id){
+        $pro=Product::where('id',$product_id)->select('main_image')->first()->toArray();
+        return $pro['main_image'];
+    }
 
 
 }

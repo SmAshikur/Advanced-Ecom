@@ -29,33 +29,15 @@
             <div class="well">
                 <h5>CREATE YOUR ACCOUNT</h5><br/>
                 Enter your e-mail address to create an account.<br/><br/><br/>
-                <form action="{{url('register')}} " method="post" id="userLogin"> @csrf
-                    <div class="control-group">
-                        <label class="control-label" for="inputName">Name</label>
-                        <div class="controls">
-                            <input class="span3"  type="text" id="inputName" name="name">
-                        </div>
-                    </div>
+                <form action="{{url('forgot-password')}} " method="post" > @csrf
                     <div class="control-group">
                         <label class="control-label" for="inputEmail0">E-mail address</label>
                         <div class="controls">
-                            <input class="span3"  type="text" id="inputEmail0" name="email">
-                        </div>
-                    </div>
-                    <div class="control-group">
-                        <label class="control-label" for="inpuPassword">Password</label>
-                        <div class="controls">
-                            <input class="span3"  type="text" id="inpuPassword" name="password">
-                        </div>
-                    </div>
-                    <div class="control-group">
-                        <label class="control-label" for="inputMobile">Mobile</label>
-                        <div class="controls">
-                            <input class="span3"  type="text" id="inputMobile" name="mobile">
+                            <input class="span3"  type="text"  name="email" required>
                         </div>
                     </div>
                     <div class="controls">
-                        <button type="submit" class="btn block">Create Your Account</button>
+                        <button type="submit" class="btn block">Find</button>
                     </div>
                 </form>
             </div>

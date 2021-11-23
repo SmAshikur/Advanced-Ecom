@@ -187,9 +187,11 @@ $(document).ready(function () {
                 data:{"new_quantity":new_quantity,"cartId":cartId},
                 success:function (resp) {
                     //alert(resp.status)
+                   // alert(resp.totalCartItems)
                     if(resp.status==false){
                         alert(resp.msg)
                     }
+                    $('.totalCart').html("[ "+resp.totalCartItems+" ]")
                     $('#AppendCart').html(resp.view)
                 },error: function () {
                     alert("err")
@@ -207,6 +209,7 @@ $(document).ready(function () {
                 data:{"cartId":cartId},
                 success:function (resp) {
                     // alert(resp)
+                    $('.totalCart').html("[ "+resp.totalCartItems+" ]")
                     $('#AppendCart').html(resp.view)
                 },error: function () {
                     alert("err")
@@ -286,6 +289,37 @@ $(document).ready(function () {
                 }
             },
             error:function () {
+                alert("err")
+            }
+        })
+    })
+
+    $("#applyCop").submit(function () {
+       var user = $(this).attr("user");
+       if(user==1){
+
+       }else{
+           alert("please login in to use coupon code");
+       }
+       var code= $("#code").val();
+        //alert(code)
+        $.ajax({
+            type:"post",
+            data:{code:code},
+            url:'/apply-coupon',
+            success:function (resp) {
+                if(resp.message!=""){
+                    alert(resp.message)
+                }
+                $('.totalCart').html("[ "+resp.totalCartItems+" ]")
+                $('#AppendCart').html(resp.view)
+                if(resp.cop>=0){
+                    $('.cop').text(resp.cop)
+                }
+                if(resp.cop>=0){
+                    $('.grand').text(resp.grand+" "+"BDT")
+                }
+            },error:function () {
                 alert("err")
             }
         })

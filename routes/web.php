@@ -10,6 +10,10 @@ use App\Http\Controllers\IndexController;
 use App\Http\Controllers\BannerController;
 use App\Http\Controllers\ListingController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\CouponController;
+use App\Http\Controllers\OrderController;
+use App\Http\Controllers\AdminOrderController;
+use \App\Http\Controllers\ShippingChargeController;
 
 /*
 |--------------------------------------------------------------------------
@@ -95,6 +99,18 @@ Route::prefix('admin')->namespace('Admin')-> group(function () {
         Route::get('del-banner/{id}',[BannerController::class,'delBanner']);
         Route::match(['get', 'post'],'/add-banner/{id?}',[BannerController::class,'addBanner'] );
         Route::get('del-ban-img/{id}',[BannerController::class,'delBan']);
+
+        Route::get('/coupon',[CouponController::class,'coupon']);
+        Route::post('/status-coupon',[CouponController::class,'checkCoupon']);
+        Route::get('del-coupon/{id}',[CouponController::class,'delCoupon']);
+        Route::match(['get', 'post'],'/add-coupon/{id?}',[CouponController::class,'addCoupon'] );
+
+        Route::get('/orders',[AdminOrderController::class,'orders']);
+        Route::get('/orders-details/{id}',[AdminOrderController::class,'ordersDetails']);
+        Route::get('/orders-invoice/{id}',[AdminOrderController::class,'ordersInvoice']);
+        Route::post('/order-status',[AdminOrderController::class,'orderStatus']);
+
+        Route::get('/shipping',[ShippingChargeController::class,'shipping']);
     });
 });
 
@@ -118,11 +134,23 @@ Route::namespace('user')->group(function (){
         Route::get('/logout',[UserController::class,'logout']);
         Route::post('/register',[UserController::class,'register']);
         Route::match(['get','post'],'check-email',[UserController::class,'checkEmail']);
+        Route::match(['get','post'],'forgot-password',[UserController::class,'forgotPassword']);
         Route::group(['middleware'=>['auth']],function (){
             Route::get('/account',[UserController::class,'account']);
             Route::post('/update-account/{id}',[UserController::class,'updateAccount']);
             Route::post('/update-user-pwd',[UserController::class,'updateAccountPwd']);
             Route::post('/check-user-pwd',[UserController::class,'checkAccountPwd']);
             Route::post('/match-user-pwd',[UserController::class,'matchAccountPwd']);
+            Route::post('/apply-coupon',[ListingController::class,'applyCoupon']);
+            Route::match(['get','post'],'check-out',[ListingController::class,'checkOut']);
+            Route::match(['get','post'],'add-delivery/{id?}',[ListingController::class,'addDelivery']);
+            Route::get('/del-delivery/{id}',[ListingController::class,'delDelivery']);
+            Route::get('/thanks',[ListingController::class,'thanks']);
+            Route::get('/orders',[OrderController::class,'orders']);
+            Route::get('/orders-details/{id}',[OrderController::class,'ordersDetails']);
+
+            Route::match(['get','post'],'confirm/{code}',[UserController::class,'confirmAccount']);
+
         });
+
 });

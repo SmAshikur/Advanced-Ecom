@@ -1,4 +1,11 @@
 $(document).ready(function () {
+
+    $.ajaxSetup({
+        headers: {
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        },
+    });
+
     $("#current_pwd").keyup(function () {
     var current_pwd= $("#current_pwd").val()
         //alert(current_pwd);
@@ -161,5 +168,26 @@ $(document).ready(function () {
       // alert("test")
      //this.form.submit();
    // })
+    $("#menuCoupon").click(function () {
+        $("#codeCoupon").show()
+    })
+    $("#autoCoupon").click(function () {
+        $("#codeCoupon").hide()
+    })
+    $("#courier_name").hide()
+    $("#tracing_number").hide()
+    $("#order_status").on('change',function () {
+   //   var order_status=(this).value
+
+        if(this.value=="Shipped"){
+           // alert(this.value)
+            $("#courier_name").show()
+            $("#tracing_number").show()
+        }else {
+            $("#courier_name").hide()
+            $("#tracing_number").hide()
+        }
+     //alert(order_status)
+    })
 
 });

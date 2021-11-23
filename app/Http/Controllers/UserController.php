@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Session;
 use Auth;
+use Illuminate\Support\Facades\Mail;
 
 class UserController extends Controller
 {
@@ -21,25 +22,66 @@ class UserController extends Controller
           //echo "<pre>";print_r($data);die();
           $user=User::where('email',$data['email'])->count();
           if($user>0){
-              $message="fail";
-              Session::flash('fail',$message);
+              $msg="fail";
+              Session::flash('fail',$msg);
               return redirect()->back();
           }else{
               User::insert(['name'=>$data['name'],'email'=>$data['email'],'password'=>bcrypt($data['password']),'mobile'=>$data['mobile']]);
-              $message="success";
 
-             if(Auth::attempt(['email'=>$data['email'],'password'=>$data['password']])){
+
+              $email=$data['email'];
+              $messageData=['name'=>$data['name'],'mobile'=>$data['mobile'],'code'=>base64_encode($data['email'])];
+              Mail::send('emails.confirm',$messageData,function ($message) use($email){
+                  $message->to($email)->subject('Confirm your account  to Becha Kena Bazar');
+              });
+
+              $msg="Confirm your account";
+              Session::flash('fail',$msg);
+              return redirect()->back();
+
+            /* if(Auth::attempt(['email'=>$data['email'],'password'=>$data['password']])){
                  if(!empty(Session::get('session_id'))){
                      Cart::where('session_id',Session::get('session_id'))->update(['user_id'=>Auth::user()->id]);
                  }
-                 Session::flash('fail',$message);
-                 return redirect('/cart');
-             }
+                 $email=$data['email'];
+                 $messageData=['name'=>$data['name'],'mobile'=>$data['mobile'],'email'=>$data['email']];
+                 Mail::send('emails.register',$messageData,function ($message) use($email){
+                     $message->to($email)->subject('Welcome to Becha Kena Bazar');
+                 });
+
+
+                 //Session::flash('fail',$msg);
+                 return redirect('/account');
+             } */
           }
 
       }
         return view('user.login');
     }
+    public function confirmAccount($email){
+        echo $email=base64_decode($email);
+        $emailCount = User::where('email',$email)->count();
+        if($emailCount>0){
+            $details = User::where('email',$email)->first();
+            if($details->status==1){
+                $msg="email already exist";
+                Session::flash('fail',$msg);
+                return redirect()->back();
+            }else{
+                User::where('email',$email)->update(['status'=>1]);
+                $messageData=['name'=>$details['name'],'mobile'=>$details['mobile'],'email'=>$email];
+                Mail::send('emails.register',$messageData,function ($message) use($email){
+                    $message->to($email)->subject('Welcome to Becha Kena Bazar');
+                });
+                $msg="success";
+                Session::flash('fail',$msg);
+                return redirect()->back();
+            }
+        }else{
+           abort(404);
+        }
+    }
+
     public function checkEmail(Request $request){
 
             $data=$request->all();
@@ -50,6 +92,35 @@ class UserController extends Controller
                 return "true";
             }
 
+    }
+    public function forgotPassword(Request $request){
+
+        if($request->isMethod('post')){
+            $data=$request->all();
+           // echo "<pre>";print_r($data);
+            $emailCount = User::where('email',$data['email'])->count();
+            if($emailCount==0){
+                $msg="success";
+                Session::flash('fail',$msg);
+                return redirect()->back();
+            }else{
+                echo $rand_pass=str_random(6); 
+                $new_pass=bcrypt($rand_pass);
+                User::where('email',$data['email'])->update(['password'=>$new_pass]);
+                $nam=User::where('email',$data['email'])->select('name')->first();
+                $email=$data['email'];
+                $name=$nam->name;
+                $messageData=['name'=>$name,'password'=>$rand_pass,'email'=>$email];
+                Mail::send('emails.forgot',$messageData,function ($message) use($email){
+                    $message->to($email)->subject('Welcome to Becha Kena Bazar');
+                });
+                $msg="please check your mail for new pass";
+                Session::flash('fail',$msg);
+                return redirect()->back();
+
+            }
+        }
+        return view('user.forget_pass');
     }
 
     public function logout(){
@@ -62,6 +133,14 @@ class UserController extends Controller
             $data = $req->all();
             $message = "successfully login";
             if (Auth::attempt(['email' => $data['email'], 'password' => $data['password']])) {
+                $status=User::where('email',$data['email'])->first();
+                if($status->status==0){
+                    Auth::logout();
+                    $msg="Please check your email. And activate your account";
+                    Session::flash('success',$msg);
+                    return redirect()->back();
+                }
+
                 if(!empty(Session::get('session_id'))){
                     Cart::where('session_id',Session::get('session_id'))->update(['user_id'=>Auth::user()->id]);
                 }

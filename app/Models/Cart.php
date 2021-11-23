@@ -12,9 +12,13 @@ class Cart extends Model
     use HasFactory;
     public static function userCart(){
         if(Auth::check()){
-            $userCart=Cart::with('product')->where('user_id',Auth::user()->id)->get()->toArray();
+            $userCart=Cart::with(['product'=>function($query){
+                $query->select('id','category_id','product_name','product_code','product_color','main_image');
+            }])->where('user_id',Auth::user()->id)->get()->toArray();
         }else{
-            $userCart=Cart::with('product')->where('session_id',Session::get('session_id'))->get()->toArray();
+            $userCart=Cart::with(['product'=>function($query){
+                $query->select('id','category_id','product_name','product_code','product_color','main_image');
+            }])->where('session_id',Session::get('session_id'))->get()->toArray();
         }
         return $userCart;
     }

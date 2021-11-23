@@ -39,14 +39,21 @@
         <td>{{$totalPrice}} BDT</td>
     </tr>
     <tr>
-        <td colspan="6" style="text-align:right">Total Discount:	</td>
+        <td colspan="6" style="text-align:right">Coupon Discount:	</td>
         <?php  ?>
-        <td>  </td>
+        <td  class="cop" >
+            @if(Session::has('copAmount'))
+                {{Session::get('copAmount')}} BDT
+            @else
+                00 BDT
+            @endif
+        </td>
     </tr>
 
     <tr>
-        <td colspan="6" style="text-align:right"><strong>TOTAL (Rs.{{$totalPrice}} - Rs.  =</strong></td>
-        <td class="label label-important" style="display:block"> <strong> {{$totalPrice-$totalDis}} </strong></td>
+        <td colspan="6" style="text-align:right"><strong>TOTAL ({{$totalPrice}} BDT -<span class="cop"> @if(Session::has('copAmount'))
+                        {{Session::get('copAmount')}} BDT @else 00 BDT @endif</span>)  =</strong></td>
+        <td class="label label-important" style="display:block"> <strong class="grand"> {{$totalPrice-Session::get('copAmount')}} BDT </strong></td>
     </tr>
     </tbody>
 </table>
